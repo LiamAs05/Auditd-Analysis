@@ -2,8 +2,24 @@
 # Auditd Logs Analyzer
 Created as an home assignment for the Magshimim + Cyngular Security job offer. This program will focus on analyzing syscalls by defining system call rules.
 
-System call rules are added to auditd using the syntax: `auditctl -a action,filter -S system_call -F field=value -k key_name`
+
+## Auditd Setup
+
+First, install auditd and useful plugins by running (Debian):
+`sudo apt-get install auditd audispd-plugins`
+
+To start auditd: `service auditd start`
+
+To stop auditd: `service auditd stop`
+
+To fetch the current status of auditd: `service auditd status`
+
+To view all current rules: `sudo auditctl -l`
+
+Log files are stored at `/var/log/audit/audit.log`
 ## Rule Setup
+
+System call rules are added to auditd using the syntax: `auditctl -a action,filter -S system_call -F field=value -k key_name`
 
 We will add the following auditd rule: `sudo auditctl -a always,exit -F arch=b64 -S fork`
 
@@ -11,7 +27,7 @@ A deeper understading of the command:
 
 `"-a always" tells the auditd daemon to always log the syscalls`
 
-`"exit" check if audit event needs to be created upon syscall exit`
+`"exit" check if audit event needs to be created upon syscall exit (evaluates all syscalls)`
 
 `"-F arch=b-64" specifies that the rule is targeted for 64-bit system`
 
