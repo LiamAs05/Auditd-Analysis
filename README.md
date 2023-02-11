@@ -68,9 +68,9 @@ The imporant functions in this class are `filter_logs` and `parse_actions`.
 
 ```py
 def filter_logs(self) -> None:
-            self._filtered_logs = self._filtered_logs.split(SEPERATOR)
-            self._filtered_logs = list(filter(lambda s: KEY 
-            in s and IS_CONFIG_RELATED not in s, self._filtered_logs))
+    self._filtered_logs = self._filtered_logs.split(SEPERATOR)
+    self._filtered_logs = list(filter(lambda s: KEY 
+    in s and IS_CONFIG_RELATED not in s, self._filtered_logs))
 ```
 
 `parse_actions` uses the filtered logs and picks the important information. It tracks the syscall that has been called, the caller username and the exit status (success/failure). It's code is mostly technical and involves a lot of string parsing with `split, rsplit, resplit, index [::], etc`.
@@ -102,33 +102,33 @@ The connection with the database is created upon the creation of an instance. Re
 For example, `get_users` reads all of the users that performed a syscall from the DB and returns a dictionary with the usernames as keys and the amount of syscalls as values.
 ```py
 def get_users(self) -> dict[str, int]:
-        users_dict = {}
-        with Session(self._engine) as session:
-            statement = select(Actions.calling_user)
-            for user in session.exec(statement):
-                if users_dict.get(user, None) == None:
-                    users_dict[user] = 0
-                else:
-                    users_dict[user] += 1
+    users_dict = {}
+    with Session(self._engine) as session:
+        statement = select(Actions.calling_user)
+        for user in session.exec(statement):
+            if users_dict.get(user, None) == None:
+                users_dict[user] = 0
+            else:
+                users_dict[user] += 1
 
-        return users_dict
+    return users_dict
 ``` 
 
 The `Visualizer` class contains a single static method that uses matplotlib's plt to create a pie diagram. This allows us to visualize the distribution of the syscalls nicely.
-```p
+```py
 @staticmethod
-    def visualize(syscalls: list[str]) -> None:
-        labels = 'fork', 'kill', 'chdir', 'execve'
-        sizes = [0, 0, 0, 0]
-        for syscall in syscalls:
-            for label in labels:
-                if syscall == label:
-                    sizes[labels.index(label)] += 1
-                    break
+def visualize(syscalls: list[str]) -> None:
+    labels = 'fork', 'kill', 'chdir', 'execve'
+    sizes = [0, 0, 0, 0]
+    for syscall in syscalls:
+        for label in labels:
+            if syscall == label:
+                sizes[labels.index(label)] += 1
+                break
 
-        fig1, ax1 = plt.subplots()
-        ax1.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
-        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-        plt.show()
+    plt.show()
 ```
