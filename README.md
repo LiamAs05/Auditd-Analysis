@@ -109,18 +109,18 @@ def get_users(self) -> dict[str, int]:
 The `Visualizer` class contains a single static method that uses matplotlib's plt to create a pie diagram. This allows us to visualize the distribution of the syscalls nicely.
 ```p
 @staticmethod
-    def visualize(syscalls: list[str]) -> None:
-        labels = 'fork', 'kill', 'chdir', 'execve'
-        sizes = [0, 0, 0, 0]
-        for syscall in syscalls:
-            for label in labels:
-                if syscall == label:
-                    sizes[labels.index(label)] += 1
-                    break
+def visualize(syscalls: list[str]) -> None:
+    labels = 'fork', 'kill', 'chdir', 'execve'
+    sizes = [0, 0, 0, 0]
+    for syscall in syscalls:
+        for label in labels:
+            if syscall == label:
+                sizes[labels.index(label)] += 1
+                break
 
-        fig1, ax1 = plt.subplots()
-        ax1.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
-        ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-        plt.show()
+    plt.show()
 ```
