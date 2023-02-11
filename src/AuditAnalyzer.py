@@ -8,7 +8,8 @@ SYSCALL_SEPARATOR = "SYSCALL"
 KEY = "SPECIAL_CALL"
 IS_CONFIG_RELATED = "CONFIG"
 SEPERATOR = "type"
-NO_FILE = -1
+NO_FILE = -3
+BAD_PARSE = -4
 
 class AuditAnalyzer:
     def __init__(self, log_path: str = None):
@@ -26,7 +27,7 @@ class AuditAnalyzer:
     def read_logs(self) -> None:
         """
         This function reads the log file
-        @return: None
+        @return None
         """
         try:
             with open(self._log_path, "r") as log_file:
@@ -38,24 +39,32 @@ class AuditAnalyzer:
     def filter_logs(self) -> None:
         """
         This function filters the lines read from the log file
-        @return: None
+        @return None
         """
-        self._filtered_logs = self._filtered_logs.split(SEPERATOR)
-        self._filtered_logs = list(filter(lambda s: KEY in s and IS_CONFIG_RELATED not in s, self._filtered_logs))
-    
+        try:
+            self._filtered_logs = self._filtered_logs.split(SEPERATOR)
+            self._filtered_logs = list(filter(lambda s: KEY in s and IS_CONFIG_RELATED not in s, self._filtered_logs))
+        except ValueError: 
+            print("Something went wrong when filtering the auditd log", file=stderr)
+            exit(BAD_PARSE)
+
     def parse_actions(self) -> None:
         """
         This function creates the SQLModel Actions which are saved on the DB
         @return None
         """
         for log in self._filtered_logs:
-            call_type = log.rsplit(SYSCALL_SEPARATOR, 1)[1]
-            call_type = call_type[1:call_type.index(" ")]
-            succeeded = log.split(SUCCESS_SEPARATOR, 1)[1]
-            succeeded = succeeded[1:succeeded.index(" ")]
-            succeeded = 1 if succeeded == "yes" else 0
-            calling_user = resplit(USER_SEPARATOR, log)[1]
-            calling_user = calling_user[2:calling_user.index('"', 2)]
+            try:
+                call_type = log.rsplit(SYSCALL_SEPARATOR, 1)[1]
+                call_type = call_type[1:call_type.index(" ")]
+                succeeded = log.split(SUCCESS_SEPARATOR, 1)[1]
+                succeeded = succeeded[1:succeeded.index(" ")]
+                succeeded = 1 if succeeded == "yes" else 0
+                calling_user = resplit(USER_SEPARATOR, log)[1]
+                calling_user = calling_user[2:calling_user.index('"', 2)]
+            except ValueError:
+                print("Something went wrong while parsing the filtered data", file=stderr)
+                exit(BAD_PARSE)
 
             self._actions.append(Actions(syscall_type=call_type, calling_user=calling_user, success=succeeded))
 
