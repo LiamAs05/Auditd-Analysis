@@ -107,7 +107,7 @@ def get_users(self) -> dict[str, int]:
 ``` 
 
 The `Visualizer` class contains a single static method that uses matplotlib's plt to create a pie diagram. This allows us to visualize the distribution of the syscalls nicely.
-```p
+```py
 @staticmethod
 def visualize(syscalls: list[str]) -> None:
     labels = 'fork', 'kill', 'chdir', 'execve'
