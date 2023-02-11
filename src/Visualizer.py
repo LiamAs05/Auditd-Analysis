@@ -5,7 +5,6 @@ from DBManager import Actions
 
 
 class Visualizer:
-
     @staticmethod
     def visualize(syscalls: list[str]) -> None:
         """
