@@ -6,6 +6,7 @@ from DBManager import DBManager
 from sys import stderr
 from os import _exit
 from time import sleep
+
 INTERRUPT = -2
 
 def main():
